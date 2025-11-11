@@ -1,0 +1,65 @@
+version: '3.8'
+
+
+services:
+# RabbitMQ Message Queue
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: notification_rabbitmq
+    ports:
+      - "5672:5672"
+      - "1572:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+
+# Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: notification_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: notification_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: notif_user
+      POSTGRES_PASSWORD: notif_pass
+      POSTGRES_DB: notification_system
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notif_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+
+volumes:
+  rabbitmq_data:
+  redis_data:
+  postgres_data:
+
+
+networks:
+  default:
+    name: notification_network
