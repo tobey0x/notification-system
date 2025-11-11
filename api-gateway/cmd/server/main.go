@@ -14,6 +14,7 @@ import (
 	"github.com/tobey0x/api-gateway/internal/cache"
 	"github.com/tobey0x/api-gateway/internal/config"
 	"github.com/tobey0x/api-gateway/internal/handlers"
+	"github.com/tobey0x/api-gateway/internal/middleware"
 	"github.com/tobey0x/api-gateway/internal/queue"
 )
 
@@ -49,18 +50,23 @@ func main() {
 	healthHandler := handlers.NewHealthHandler(rabbitMQ, redisClient)
 	notificationHandler := handlers.NewNotificationHandler(rabbitMQ, redisClient)
 
+	// Initialize middleware
+	authMiddleware := middleware.NewAuthMiddleware(cfg.Auth.JWTSecret)
+	rateLimiter := middleware.NewRateLimiter(redisClient, 100, time.Minute)
 
 	router := gin.Default()
 
-
+	// Global middleware
 	router.Use(corsMiddleware())
 	router.Use(logginMiddleware())
 
-
+	// Public routes
 	router.GET("/health", healthHandler.CheckHealth)
 
-
+	// Protected API routes
 	v1 := router.Group("/api/v1")
+	v1.Use(authMiddleware.RequireAuth())
+	v1.Use(rateLimiter.RateLimit())
 	{
 		v1.POST("/notifications", notificationHandler.CreateNotifiation)
 		v1.GET("/notifications/:id", notificationHandler.GetNotificationStatus)

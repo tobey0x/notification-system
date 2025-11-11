@@ -50,6 +50,17 @@ func ErrorResponse(message string, err error) Response {
 	}
 }
 
+func ErrorResponseSimple(message string) Response {
+	errMsg := message
+	return Response{
+		Success: false,
+		Data:    nil,
+		Error:   &errMsg,
+		Message: message,
+		Meta:    nil,
+	}
+}
+
 
 func ValidationErrorResponse(validationErrors interface{}) Response {
 	errMsg := "Validation failed"
