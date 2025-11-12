@@ -1,0 +1,109 @@
+import { PushService } from './push.service';
+import { logger } from '../utils/logger';
+import { NotificationQueueMessage, PushNotificationMessage } from '../types/push.types';
+import { Channel } from 'amqplib';
+
+// Store the channel getter function
+let _getChannel: (() => Channel | null) | null = null;
+
+// This function will be called by rabbitmq.ts to provide the getChannel function
+export function setChannelGetter(getter: () => Channel | null): void {
+  _getChannel = getter;
+}
+
+/**
+ * Process notification from queue (API Gateway format)
+ * This is the main entry point for queue messages
+ */
+export const processPushNotification = async (message: NotificationQueueMessage | PushNotificationMessage): Promise<void> => {
+  const pushService = PushService.getInstance();
+  
+  try {
+    // Check if it's the new API Gateway format (has user_id and template_code)
+    if ('user_id' in message && 'template_code' in message) {
+      // New format: Fetch user data and template, process notification
+      await pushService.processNotificationFromQueue(message as NotificationQueueMessage);
+      logger.info(`Successfully processed push notification for user: ${message.user_id}, request: ${message.request_id}`);
+    } else if ('deviceToken' in message) {
+      // Legacy format: Direct device token (for backward compatibility)
+      const legacyMessage = message as PushNotificationMessage;
+      const { deviceToken, ...notification } = legacyMessage;
+      await pushService.sendToDevice(deviceToken, {
+        title: notification.title,
+        body: notification.body,
+        data: notification.data,
+        imageUrl: notification.imageUrl,
+        clickAction: notification.clickAction,
+      });
+      logger.info(`Successfully processed push notification for device: ${deviceToken}`);
+    } else {
+      throw new Error('Invalid message format: missing user_id/template_code or deviceToken');
+    }
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorObj = error instanceof Error ? error : new Error(errorMessage);
+    
+    logger.error(`Failed to process push notification:`, {
+      message: 'user_id' in message ? message.user_id : 'deviceToken' in message ? message.deviceToken : 'unknown',
+      error: errorObj.message,
+      stack: errorObj.stack,
+    });
+    await moveToFailedQueue(message, errorObj);
+    throw errorObj; // Re-throw to trigger NACK in the consumer
+  }
+};
+
+export const moveToFailedQueue = async (message: NotificationQueueMessage | PushNotificationMessage, error: Error): Promise<void> => {
+  if (!_getChannel) {
+    logger.error('RabbitMQ channel getter not initialized');
+    return;
+  }
+
+  const channel = _getChannel();
+  if (!channel) {
+    logger.error('Failed to get RabbitMQ channel for failed queue');
+    return;
+  }
+
+  const failedQueue = process.env.FAILED_QUEUE || 'failed.queue';
+  
+  try {
+    await channel.assertQueue(failedQueue, { durable: true });
+    
+    const errorPayload = {
+      message,
+      error: {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      },
+      timestamp: new Date().toISOString()
+    };
+
+    const sent = channel.sendToQueue(
+      failedQueue,
+      Buffer.from(JSON.stringify(errorPayload)),
+      { persistent: true }
+    );
+
+    if (!sent) {
+      throw new Error('Failed to send message to failed queue: channel is closed or queue is full');
+    }
+
+    logger.info('Message moved to failed queue');
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+    logger.error(`Failed to move message to failed queue (${failedQueue}):`, errorMessage);
+    
+    // If we can't send to the failed queue, at least log the error
+    logger.error('Original message that failed to be moved to failed queue:', {
+      message,
+      error: {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      },
+      timestamp: new Date().toISOString()
+    });
+  }
+};

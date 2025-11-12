@@ -1,0 +1,99 @@
+2025-11-11 21:28:21.374 [[32minfo[39m]: 	[32mFirebase Admin SDK initialized[39m
+2025-11-11 21:28:21.672 [[31merror[39m]: 	[31mHandshake terminated by server: 403 (ACCESS-REFUSED) with message "ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile." Handshake terminated by server: 403 (ACCESS-REFUSED) with message "ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile."[39m
+{
+  "stack": "Error: Handshake terminated by server: 403 (ACCESS-REFUSED) with message \"ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.\"\n    at afterStartOk (C:\\Users\\AJAO PETER OLUWAFEMI\\Documents\\AJAO\\HNG\\stage_4\\push-service\\node_modules\\amqplib\\lib\\connection.js:169:16)\n    at C:\\Users\\AJAO PETER OLUWAFEMI\\Documents\\AJAO\\HNG\\stage_4\\push-service\\node_modules\\amqplib\\lib\\connection.js:104:11\n    at Socket.recv (C:\\Users\\AJAO PETER OLUWAFEMI\\Documents\\AJAO\\HNG\\stage_4\\push-service\\node_modules\\amqplib\\lib\\connection.js:453:9)\n    at Object.onceWrapper (node:events:632:28)\n    at Socket.emit (node:events:518:28)\n    at emitReadable_ (node:internal/streams/readable:834:12)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-11-11 21:28:35.947 [[32minfo[39m]: 	[32mFirebase Admin SDK initialized[39m
+2025-11-11 21:28:36.035 [[31merror[39m]: 	[31mHandshake terminated by server: 403 (ACCESS-REFUSED) with message "ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile." Handshake terminated by server: 403 (ACCESS-REFUSED) with message "ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile."[39m
+{
+  "stack": "Error: Handshake terminated by server: 403 (ACCESS-REFUSED) with message \"ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.\"\n    at afterStartOk (C:\\Users\\AJAO PETER OLUWAFEMI\\Documents\\AJAO\\HNG\\stage_4\\push-service\\node_modules\\amqplib\\lib\\connection.js:169:16)\n    at C:\\Users\\AJAO PETER OLUWAFEMI\\Documents\\AJAO\\HNG\\stage_4\\push-service\\node_modules\\amqplib\\lib\\connection.js:104:11\n    at Socket.recv (C:\\Users\\AJAO PETER OLUWAFEMI\\Documents\\AJAO\\HNG\\stage_4\\push-service\\node_modules\\amqplib\\lib\\connection.js:453:9)\n    at Object.onceWrapper (node:events:632:28)\n    at Socket.emit (node:events:518:28)\n    at emitReadable_ (node:internal/streams/readable:834:12)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-11-11 21:29:08.291 [[32minfo[39m]: 	[32mFirebase Admin SDK initialized[39m
+2025-11-11 21:29:08.354 [[31merror[39m]: 	[31mHandshake terminated by server: 403 (ACCESS-REFUSED) with message "ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile." Handshake terminated by server: 403 (ACCESS-REFUSED) with message "ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile."[39m
+{
+  "stack": "Error: Handshake terminated by server: 403 (ACCESS-REFUSED) with message \"ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.\"\n    at afterStartOk (C:\\Users\\AJAO PETER OLUWAFEMI\\Documents\\AJAO\\HNG\\stage_4\\push-service\\node_modules\\amqplib\\lib\\connection.js:169:16)\n    at C:\\Users\\AJAO PETER OLUWAFEMI\\Documents\\AJAO\\HNG\\stage_4\\push-service\\node_modules\\amqplib\\lib\\connection.js:104:11\n    at Socket.recv (C:\\Users\\AJAO PETER OLUWAFEMI\\Documents\\AJAO\\HNG\\stage_4\\push-service\\node_modules\\amqplib\\lib\\connection.js:453:9)\n    at Object.onceWrapper (node:events:632:28)\n    at Socket.emit (node:events:518:28)\n    at emitReadable_ (node:internal/streams/readable:834:12)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-11-11 22:06:16.336 [[32minfo[39m]: 	[32mFirebase Admin SDK initialized[39m
+2025-11-11 22:06:16.419 [[31merror[39m]: 	[31mHandshake terminated by server: 403 (ACCESS-REFUSED) with message "ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile." Handshake terminated by server: 403 (ACCESS-REFUSED) with message "ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile."[39m
+{
+  "stack": "Error: Handshake terminated by server: 403 (ACCESS-REFUSED) with message \"ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.\"\n    at afterStartOk (C:\\Users\\AJAO PETER OLUWAFEMI\\Documents\\AJAO\\HNG\\stage_4\\push-service\\node_modules\\amqplib\\lib\\connection.js:169:16)\n    at C:\\Users\\AJAO PETER OLUWAFEMI\\Documents\\AJAO\\HNG\\stage_4\\push-service\\node_modules\\amqplib\\lib\\connection.js:104:11\n    at Socket.recv (C:\\Users\\AJAO PETER OLUWAFEMI\\Documents\\AJAO\\HNG\\stage_4\\push-service\\node_modules\\amqplib\\lib\\connection.js:453:9)\n    at Object.onceWrapper (node:events:632:28)\n    at Socket.emit (node:events:518:28)\n    at emitReadable_ (node:internal/streams/readable:834:12)\n    at processTicksAndRejections (node:internal/process/task_queues:89:21)"
+}
+2025-11-11 22:06:58.372 [[32minfo[39m]: 	[32mFirebase Admin SDK initialized[39m
+2025-11-11 22:06:58.378 [[32minfo[39m]: 	[32mConnecting to RabbitMQ at amqp://admin:***@localhost:5672/[39m
+2025-11-11 22:06:58.458 [[31merror[39m]: 	[31mFailed to connect to RabbitMQ: Handshake terminated by server: 403 (ACCESS-REFUSED) with message "ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile."[39m
+2025-11-11 22:06:58.475 [[32minfo[39m]: 	[32mRetrying connection (attempt 1/5)...[39m
+2025-11-11 22:07:03.500 [[32minfo[39m]: 	[32mConnection attempt already in progress[39m
+2025-11-11 22:07:03.582 [[32minfo[39m]: 	[32mServer is running on http://localhost:3001[39m
+2025-11-11 22:40:06.358 [[32minfo[39m]: 	[32mFirebase Admin SDK initialized[39m
+2025-11-11 22:40:06.361 [[32minfo[39m]: 	[32mConnecting to RabbitMQ at amqp://guest:***@localhost:5672/[39m
+2025-11-11 22:40:06.404 [[31merror[39m]: 	[31mRabbitMQ channel error:[39m
+{
+  "error": "Channel closed by server: 406 (PRECONDITION-FAILED) with message \"PRECONDITION_FAILED - inequivalent arg 'x-message-ttl' for queue 'push' in vhost '/': received the value '86400000' of type 'signedint' but current is none\""
+}
+2025-11-11 22:40:06.407 [[31merror[39m]: 	[31mError setting up queues: Operation failed: QueueDeclare; 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - inequivalent arg 'x-message-ttl' for queue 'push' in vhost '/': received the value '86400000' of type 'signedint' but current is none"[39m
+2025-11-11 22:40:06.408 [[31merror[39m]: 	[31mFailed to connect to RabbitMQ: Operation failed: QueueDeclare; 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - inequivalent arg 'x-message-ttl' for queue 'push' in vhost '/': received the value '86400000' of type 'signedint' but current is none"[39m
+2025-11-11 22:40:06.408 [[32minfo[39m]: 	[32mRetrying connection (attempt 1/5)...[39m
+2025-11-11 22:40:11.416 [[32minfo[39m]: 	[32mConnection attempt already in progress[39m
+2025-11-11 22:40:11.456 [[32minfo[39m]: 	[32mServer is running on http://localhost:3001[39m
+2025-11-11 22:42:14.028 [[32minfo[39m]: 	[32mFirebase Admin SDK initialized[39m
+2025-11-11 22:42:14.032 [[32minfo[39m]: 	[32mConnecting to RabbitMQ at amqp://guest:***@localhost:5672/[39m
+2025-11-11 22:42:14.088 [[31merror[39m]: 	[31mRabbitMQ channel error:[39m
+{
+  "error": "Channel closed by server: 406 (PRECONDITION-FAILED) with message \"PRECONDITION_FAILED - inequivalent arg 'x-message-ttl' for queue 'push' in vhost '/': received the value '86400000' of type 'signedint' but current is none\""
+}
+2025-11-11 22:42:14.093 [[31merror[39m]: 	[31mError setting up queues: Operation failed: QueueDeclare; 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - inequivalent arg 'x-message-ttl' for queue 'push' in vhost '/': received the value '86400000' of type 'signedint' but current is none"[39m
+2025-11-11 22:42:14.094 [[31merror[39m]: 	[31mFailed to connect to RabbitMQ: Operation failed: QueueDeclare; 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - inequivalent arg 'x-message-ttl' for queue 'push' in vhost '/': received the value '86400000' of type 'signedint' but current is none"[39m
+2025-11-11 22:42:14.096 [[32minfo[39m]: 	[32mRetrying connection (attempt 1/5)...[39m
+2025-11-11 22:42:19.101 [[32minfo[39m]: 	[32mConnection attempt already in progress[39m
+2025-11-11 22:42:19.139 [[32minfo[39m]: 	[32mServer is running on http://localhost:3001[39m
+2025-11-12 08:13:06.813 [[32minfo[39m]: 	[32mFirebase Admin SDK initialized[39m
+2025-11-12 08:13:06.820 [[32minfo[39m]: 	[32mConnecting to RabbitMQ at amqp://guest:***@localhost:5672/[39m
+2025-11-12 08:13:06.927 [[31merror[39m]: 	[31mRabbitMQ channel error:[39m
+{
+  "error": "Channel closed by server: 406 (PRECONDITION-FAILED) with message \"PRECONDITION_FAILED - inequivalent arg 'x-message-ttl' for queue 'push' in vhost '/': received the value '86400000' of type 'signedint' but current is none\""
+}
+2025-11-12 08:13:06.934 [[31merror[39m]: 	[31mError setting up queues: Operation failed: QueueDeclare; 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - inequivalent arg 'x-message-ttl' for queue 'push' in vhost '/': received the value '86400000' of type 'signedint' but current is none"[39m
+2025-11-12 08:13:06.936 [[31merror[39m]: 	[31mFailed to connect to RabbitMQ: Operation failed: QueueDeclare; 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - inequivalent arg 'x-message-ttl' for queue 'push' in vhost '/': received the value '86400000' of type 'signedint' but current is none"[39m
+2025-11-12 08:13:06.937 [[32minfo[39m]: 	[32mRetrying connection (attempt 1/5)...[39m
+2025-11-12 08:13:11.952 [[32minfo[39m]: 	[32mConnection attempt already in progress[39m
+2025-11-12 08:13:12.062 [[32minfo[39m]: 	[32mServer is running on http://localhost:3001[39m
+2025-11-12 08:13:43.848 [[32minfo[39m]: 	[32mFirebase Admin SDK initialized[39m
+2025-11-12 08:13:43.859 [[32minfo[39m]: 	[32mConnecting to RabbitMQ at amqp://guest:***@localhost:5672/[39m
+2025-11-12 08:13:43.996 [[31merror[39m]: 	[31mRabbitMQ channel error:[39m
+{
+  "error": "Channel closed by server: 406 (PRECONDITION-FAILED) with message \"PRECONDITION_FAILED - inequivalent arg 'x-message-ttl' for queue 'push' in vhost '/': received the value '86400000' of type 'signedint' but current is none\""
+}
+2025-11-12 08:13:44.007 [[31merror[39m]: 	[31mError setting up queues: Operation failed: QueueDeclare; 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - inequivalent arg 'x-message-ttl' for queue 'push' in vhost '/': received the value '86400000' of type 'signedint' but current is none"[39m
+2025-11-12 08:13:44.009 [[31merror[39m]: 	[31mFailed to connect to RabbitMQ: Operation failed: QueueDeclare; 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - inequivalent arg 'x-message-ttl' for queue 'push' in vhost '/': received the value '86400000' of type 'signedint' but current is none"[39m
+2025-11-12 08:13:44.014 [[32minfo[39m]: 	[32mRetrying connection (attempt 1/5)...[39m
+2025-11-12 08:13:49.019 [[32minfo[39m]: 	[32mConnection attempt already in progress[39m
+2025-11-12 08:13:49.149 [[32minfo[39m]: 	[32mServer is running on http://localhost:3001[39m
+2025-11-12 08:15:08.367 [[32minfo[39m]: 	[32mFirebase Admin SDK initialized[39m
+2025-11-12 08:15:08.372 [[32minfo[39m]: 	[32mConnecting to RabbitMQ at amqp://guest:***@localhost:5672/[39m
+2025-11-12 08:15:08.461 [[31merror[39m]: 	[31mRabbitMQ channel error:[39m
+{
+  "error": "Channel closed by server: 406 (PRECONDITION-FAILED) with message \"PRECONDITION_FAILED - inequivalent arg 'x-message-ttl' for queue 'push' in vhost '/': received the value '86400000' of type 'signedint' but current is none\""
+}
+2025-11-12 08:15:08.478 [[31merror[39m]: 	[31mError setting up queues: Operation failed: QueueDeclare; 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - inequivalent arg 'x-message-ttl' for queue 'push' in vhost '/': received the value '86400000' of type 'signedint' but current is none"[39m
+2025-11-12 08:15:08.484 [[31merror[39m]: 	[31mFailed to connect to RabbitMQ: Operation failed: QueueDeclare; 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - inequivalent arg 'x-message-ttl' for queue 'push' in vhost '/': received the value '86400000' of type 'signedint' but current is none"[39m
+2025-11-12 08:15:08.485 [[32minfo[39m]: 	[32mRetrying connection (attempt 1/5)...[39m
+2025-11-12 08:15:13.499 [[32minfo[39m]: 	[32mConnection attempt already in progress[39m
+2025-11-12 08:15:13.701 [[32minfo[39m]: 	[32mServer is running on http://localhost:3001[39m
+2025-11-12 08:17:08.241 [[32minfo[39m]: 	[32mFirebase Admin SDK initialized[39m
+2025-11-12 08:17:08.247 [[32minfo[39m]: 	[32mConnecting to RabbitMQ at amqp://guest:***@localhost:5672/[39m
+2025-11-12 08:17:08.375 [[32minfo[39m]: 	[32mQueue push already exists, using existing configuration[39m
+2025-11-12 08:17:08.407 [[32minfo[39m]: 	[32mConsumer started successfully[39m
+2025-11-12 08:17:08.408 [[32minfo[39m]: 	[32mSuccessfully connected to RabbitMQ and set up queues[39m
+2025-11-12 08:17:08.455 [[32minfo[39m]: 	[32mServer is running on http://localhost:3001[39m
+2025-11-12 08:18:22.918 [[32minfo[39m]: 	[32mFirebase Admin SDK initialized[39m
+2025-11-12 08:18:22.923 [[32minfo[39m]: 	[32mConnecting to RabbitMQ at amqp://guest:***@localhost:5672/[39m
+2025-11-12 08:18:22.997 [[32minfo[39m]: 	[32mQueue push already exists, using existing configuration[39m
+2025-11-12 08:18:23.001 [[32minfo[39m]: 	[32mConsumer started successfully[39m
+2025-11-12 08:18:23.001 [[32minfo[39m]: 	[32mSuccessfully connected to RabbitMQ and set up queues[39m
+2025-11-12 08:18:23.056 [[32minfo[39m]: 	[32mServer is running on http://localhost:3001[39m
+2025-11-12 16:18:10.357 [[32minfo[39m]: 	[32mFirebase Admin SDK initialized[39m
+2025-11-12 16:18:10.367 [[32minfo[39m]: 	[32mConnecting to RabbitMQ at amqp://guest:***@localhost:5672/[39m
+2025-11-12 16:18:10.528 [[32minfo[39m]: 	[32mQueue push already exists, using existing configuration[39m
+2025-11-12 16:18:10.645 [[32minfo[39m]: 	[32mConsumer started successfully[39m
+2025-11-12 16:18:10.652 [[32minfo[39m]: 	[32mSuccessfully connected to RabbitMQ and set up queues[39m
+2025-11-12 16:18:10.721 [[32minfo[39m]: 	[32mServer is running on http://localhost:3001[39m
