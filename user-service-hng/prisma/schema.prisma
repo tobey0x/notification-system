@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Use DATABASE_URL to match prisma.config.ts and common conventions
+  url      = env("DATABASE_URI")
+}
+
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  password     String
+  role         String   @default("user")
+  refreshToken String?  // store the latest refresh token
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  preference   UserPreference? @relation("UserPreferenceToUser")
+  pushTokens   PushToken[] @relation("PushTokenToUser")
+}
+
+
+model UserPreference {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  email_enabled Boolean  @default(true)
+  push_enabled  Boolean  @default(true)
+  language     String   @default("en")
+  timezone     String?  
+  user         User     @relation("UserPreferenceToUser", fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PushToken {
+  id         String   @id @default(uuid())
+  userId     String
+  token      String
+  platform   String   @default("android")// e.g., "android", "ios", "web"
+  device_name String?  // optional: "iPhone 15 Pro"
+  created_at  DateTime @default(now())
+  user       User     @relation("PushTokenToUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
