@@ -5,7 +5,7 @@
     "rootDir": "./src",
     "outDir": "./dist",
     // Base URL and path aliases
-    "baseUrl" : "./",
+    "baseUrl": "/user-service-hng",
     "paths": {
       "@/*": ["src/*"],
       "@": ["src"]
