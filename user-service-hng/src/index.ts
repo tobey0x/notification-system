@@ -2,7 +2,6 @@ import fastify, { FastifyInstance } from "fastify";
 import dotenv from "dotenv";
 import { AuthRoutes } from "./routes/auth-routes";
 import { UserRoutes } from "./routes/user-routes";
-import jwt from "jsonwebtoken";
 import { PrismaClient } from "./generated/prisma/client";
 import { Redis } from "@upstash/redis";
 dotenv.config();

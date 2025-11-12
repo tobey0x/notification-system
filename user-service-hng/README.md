@@ -16,6 +16,7 @@ This service is the single source of truth for all user data. It handles:
 - **Database**: [PostgreSQL](https://www.postgresql.org/) (or any other Prisma-supported database)
 - **Authentication**: [JWT](https://jwt.io/) (JSON Web Tokens)
 - **Validation**: [Zod](https://zod.dev/)
+- **Cache**: [Redis](https://redis.io/) (used for caching frequently accessed data)
 
 ## Getting Started
 
@@ -34,30 +35,35 @@ This service is the single source of truth for all user data. It handles:
    cd user-service-hng
    ```
 
-2. **Install dependencies:**
+1. **Install dependencies:**
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 
-3. **Set up environment variables:**
+1. **Set up environment variables:**
 
    Create a `.env` file in the root of the project and add the following variables:
 
-   ```env
-   DATABASE_URL="postgresql://<user>:<password>@<host>:<port>/<database>"
-   ACCESS_SECRET="your-access-secret"
-   PORT=3000
-   REFRESH_SECRET="your-refresh-secret"
-   ```
+```env
+DATABASE_URL="postgresql://<user>:<password>@<host>:<port>/<database>"
+ACCESS_SECRET="your-access-secret"
+PORT=3000
+REFRESH_SECRET="your-refresh-secret"
+# If using Upstash (recommended for serverless deployments):
+UPSTASH_REDIS_REST_URL="https://<your-upstash-id>.upstash.io"
+UPSTASH_REDIS_REST_TOKEN="<your-upstash-rest-token>"
+# Or for a self-hosted/standard Redis instance use:
+# REDIS_URL="redis://[:password@]host:port[/db]"
+```
 
-4. **Run database migrations:**
+1. **Run database migrations:**
 
    ```bash
    npx prisma migrate dev
    ```
 
-5. **Start the development server:**
+1. **Start the development server:**
 
    ```bash
    npm run dev
@@ -351,15 +357,35 @@ Deletes a push notification token by its ID.
 
 ## Environment Variables
 
-- `DATABASE_URL`: The connection string for your PostgreSQL database.
-- `ACCESS_SECRET`: A secret key for signing access tokens.
-- `REFRESH_SECRET`: A secret key for signing refresh tokens.
+ - `DATABASE_URL`: The connection string for your PostgreSQL database.
+ - `ACCESS_SECRET`: A secret key for signing access tokens.
+ - `REFRESH_SECRET`: A secret key for signing refresh tokens.
+ - `UPSTASH_REDIS_REST_URL`: (optional) Upstash REST URL used by `@upstash/redis` (see `.env` example).
+ - `UPSTASH_REDIS_REST_TOKEN`: (optional) Upstash REST token (used together with the REST URL).
+ - `REDIS_URL`: (optional) Redis connection string, e.g. `redis://[:password@]host:port[/db]`.
+ - `REDIS_HOST` / `REDIS_PORT`: Alternative to `REDIS_URL` if you prefer split values (default port 6379).
+
+## Caching (Redis)
+
+This service integrates Redis for caching frequently accessed user data (for example: profile and preference lookups) to reduce database load and improve response times. The Redis client is initialized in `src/index.ts` (the project uses `@upstash/redis` by default).
+
+Configuration:
+
+- If you're using Upstash (a serverless Redis provider) set `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` (this repo already includes `.env` example values for Upstash).
+- Otherwise you can provide a standard Redis connection via `REDIS_URL` (or `REDIS_HOST`/`REDIS_PORT` + optional `REDIS_PASSWORD`).
+
+Precedence: Upstash env vars take precedence when present (the `@upstash/redis` client will be initialized from `process.env`), otherwise the code will fall back to `REDIS_URL`/host settings.
+
+Notes:
+
+- Caching is optional; the service falls back to the database when cache entries are missing.
+- Ensure a Redis instance (or Upstash resource) is reachable from this service in your deployment environment.
 
 ## Scripts
 
 - `npm run build`: Compiles the TypeScript code.
 - `npm run start`: Starts the compiled application.
 - `npm run dev`: Starts the application in development mode with hot-reloading.
-- `npm test`: (Not yet implemented)
+- `npm test`: Starts and runs all tests
 
 ### made with ❤ by group 3
