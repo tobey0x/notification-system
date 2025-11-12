@@ -1,7 +1,6 @@
 import { FastifyReply, FastifyRequest, RouteHandlerMethod } from "fastify";
 import { prisma } from "../index";
-import id from "zod/v4/locales/id.js";
-
+import { redis } from "../index";
 export const getUserProfile = async (
   req: FastifyRequest,
   reply: FastifyReply
@@ -11,13 +10,34 @@ export const getUserProfile = async (
     if (!userId) {
       return reply.status(401).send({ message: "Unauthorized" });
     }
-
+    const userData = await redis.get<string>(`user_profile_${userId}`);
+    if (userData) {
+      return reply.status(200).send({
+        data: userData,
+        message: "User profile fetched successfully",
+        success: true,
+      });
+    }
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { preference: true, pushTokens: true },
     });
     if (!user) return reply.status(404).send({ message: "User not found" });
-
+    await redis.set(
+      `user_profile_${userId}`,
+      JSON.stringify({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        created_at: user.created_at,
+        preference: user.preference ?? null,
+        pushTokens: user.pushTokens ?? [],
+      }),
+      {
+        ex: 1800,
+      }
+    );
     return reply.status(200).send({
       data: {
         id: user.id,
@@ -46,11 +66,36 @@ export const getProfileById = async (
     if (!userId) {
       return reply.status(400).send({ message: "User ID is required" });
     }
+    const userData = await redis.get<string>(`user_profile_${userId}`);
+    if (userData) {
+      return reply.status(200).send({
+        data: userData,
+        message: "User profile fetched successfully",
+        success: true,
+      });
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { preference: true, pushTokens: true },
     });
     if (!user) return reply.status(404).send({ message: "User not found" });
+
+    await redis.set(
+      `user_profile_${userId}`,
+      {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        created_at: user.created_at,
+        preference: user.preference ?? null,
+        pushTokens: user.pushTokens ?? [],
+      },
+      {
+        ex: 1800,
+      }
+    );
 
     return reply.status(200).send({
       data: {
@@ -77,12 +122,23 @@ export const getPreferenceById: RouteHandlerMethod = async (req, reply) => {
     if (!id) {
       return reply.status(400).send({ message: "User ID is required" });
     }
+    const userPreference = await redis.get<string>(`user_preference_${id}`);
+    if (userPreference) {
+      return reply.status(200).send({
+        data: userPreference,
+        message: "Preference fetched successfully",
+        success: true,
+      });
+    }
     const preference = await prisma.userPreference.findUnique({
       where: { userId: id },
     });
     if (!preference) {
       return reply.status(404).send({ message: "Preference not found" });
     }
+    await redis.set(`user_preference_${id}`, JSON.stringify(preference), {
+      ex: 1800,
+    });
     return reply.status(200).send({
       data: preference,
       message: "Preference fetched successfully",
