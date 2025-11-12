@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import type { RegisterBody } from "@/lib/auth-types";
+import type { RegisterBody } from "../lib/auth-types";
 import { z } from "zod";
 import { prisma } from "../index";
 import jwt from "jsonwebtoken";
