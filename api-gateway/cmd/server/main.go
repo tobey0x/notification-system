@@ -51,8 +51,10 @@ func main() {
 	notificationHandler := handlers.NewNotificationHandler(rabbitMQ, redisClient)
 
 	// Initialize middleware
-	authMiddleware := middleware.NewAuthMiddleware(cfg.Auth.JWTSecret)
+	authMiddleware := middleware.NewAuthMiddleware(cfg.Auth.JWTSecret, cfg.Auth.AccessSecret, cfg.UserService.URL)
 	rateLimiter := middleware.NewRateLimiter(redisClient, 100, time.Minute)
+
+	log.Printf("✓ User Service integration configured at: %s", cfg.UserService.URL)
 
 	router := gin.Default()
 
@@ -65,7 +67,7 @@ func main() {
 
 	// Protected API routes
 	v1 := router.Group("/api/v1")
-	v1.Use(authMiddleware.RequireAuth())
+	v1.Use(authMiddleware.RequireAuth()) // JWT validation with User Service
 	v1.Use(rateLimiter.RateLimit())
 	{
 		v1.POST("/notifications", notificationHandler.CreateNotifiation)
