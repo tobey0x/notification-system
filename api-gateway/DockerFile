@@ -1,8 +1,5 @@
 # Build stage
-FROM golang:1.21-alpine AS builder
-
-# Install build dependencies
-RUN apk add --no-cache git gcc musl-dev
+FROM golang:alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -16,14 +13,19 @@ RUN go mod download
 # Copy source code
 COPY . .
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/server
+# Build the application (static binary)
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-w -s" -o main ./cmd/server
 
-# Final stage
-FROM alpine:latest
+# Final stage - use scratch for minimal size since we have a static binary
+FROM debian:bullseye-slim
 
-# Install ca-certificates for HTTPS
-RUN apk --no-cache add ca-certificates
+# Runtime stage
+FROM alpine:3.19
+
+# Install ca-certificates and wget for HTTPS and healthcheck with retry
+RUN apk update --no-cache && \
+    apk add --no-cache ca-certificates wget || \
+    (sleep 5 && apk add --no-cache ca-certificates wget)
 
 WORKDIR /root/
 
