@@ -8,24 +8,29 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/tobey0x/api-gateway/internal/client"
 	"github.com/tobey0x/api-gateway/internal/models"
 )
 
 type AuthMiddleware struct {
-	jwtSecret string
+	jwtSecret     string
+	accessSecret  string  // User Service access token secret
+	userService   *client.UserServiceClient
 }
 
-func NewAuthMiddleware(jwtSecret string) *AuthMiddleware {
+func NewAuthMiddleware(jwtSecret string, accessSecret string, userServiceURL string) *AuthMiddleware {
 	return &AuthMiddleware{
-		jwtSecret: jwtSecret,
+		jwtSecret:    jwtSecret,
+		accessSecret: accessSecret,
+		userService:  client.NewUserServiceClient(userServiceURL),
 	}
 }
 
-// Claims represents the JWT claims structure
+// Claims represents the JWT claims structure from User Service
 type Claims struct {
-	UserID   string   `json:"user_id"`
-	Email    string   `json:"email"`
-	Roles    []string `json:"roles"`
+	ID    string `json:"id"`    // User Service uses 'id' instead of 'user_id'
+	Email string `json:"email"`
+	Role  string `json:"role"`  // User Service uses singular 'role'
 	jwt.RegisteredClaims
 }
 
@@ -49,13 +54,14 @@ func (m *AuthMiddleware) RequireAuth() gin.HandlerFunc {
 
 		tokenString := parts[1]
 
-		// Parse and validate token
+		// Parse and validate token using User Service ACCESS_SECRET
 		token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 			// Validate signing method
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
-			return []byte(m.jwtSecret), nil
+			// Use ACCESS_SECRET for User Service tokens
+			return []byte(m.accessSecret), nil
 		})
 
 		if err != nil {
@@ -78,10 +84,12 @@ func (m *AuthMiddleware) RequireAuth() gin.HandlerFunc {
 			return
 		}
 
-		// Add user info to context
-		c.Set("user_id", claims.UserID)
+		// Add user info to context (User Service format)
+		c.Set("user_id", claims.ID)
 		c.Set("user_email", claims.Email)
-		c.Set("user_roles", claims.Roles)
+		c.Set("user_role", claims.Role)
+		// For compatibility, also set as array
+		c.Set("user_roles", []string{claims.Role})
 
 		c.Next()
 	}
@@ -107,16 +115,55 @@ func (m *AuthMiddleware) OptionalAuth() gin.HandlerFunc {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
-			return []byte(m.jwtSecret), nil
+			return []byte(m.accessSecret), nil
 		})
 
 		if err == nil {
 			if claims, ok := token.Claims.(*Claims); ok && token.Valid {
-				c.Set("user_id", claims.UserID)
+				c.Set("user_id", claims.ID)
 				c.Set("user_email", claims.Email)
-				c.Set("user_roles", claims.Roles)
+				c.Set("user_role", claims.Role)
+				c.Set("user_roles", []string{claims.Role})
 			}
 		}
+
+		c.Next()
+	}
+}
+
+// RequireAuthWithValidation validates token and fetches user profile from User Service
+func (m *AuthMiddleware) RequireAuthWithValidation() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, models.ErrorResponseSimple("Missing authorization header"))
+			c.Abort()
+			return
+		}
+
+		parts := strings.SplitN(authHeader, " ", 2)
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			c.JSON(http.StatusUnauthorized, models.ErrorResponseSimple("Invalid authorization header format"))
+			c.Abort()
+			return
+		}
+
+		tokenString := parts[1]
+
+		// Validate token with User Service
+		profile, err := m.userService.ValidateToken(c.Request.Context(), tokenString)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, models.ErrorResponseSimple(fmt.Sprintf("Invalid token: %v", err)))
+			c.Abort()
+			return
+		}
+
+		// Add user info to context
+		c.Set("user_id", profile.ID)
+		c.Set("user_email", profile.Email)
+		c.Set("user_role", profile.Role)
+		c.Set("user_roles", []string{profile.Role})
+		c.Set("user_profile", profile)
 
 		c.Next()
 	}

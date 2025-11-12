@@ -14,6 +14,7 @@ type Config struct {
 	RabbitMQ	RabbitMQConfig
 	Redis		RedisConfig
 	Auth		AuthConfig
+	UserService	UserServiceConfig
 }
 
 
@@ -40,8 +41,12 @@ type RedisConfig struct {
 
 type AuthConfig struct {
 	JWTSecret		string
+	AccessSecret	string  // User Service uses different secrets
 }
 
+type UserServiceConfig struct {
+	URL		string
+}
 
 func Load() *Config {
 	_ = godotenv.Load()
@@ -64,7 +69,11 @@ func Load() *Config {
 			DB: 	getEnvAsInt("REDIS_DB", 0),
 		},
 		Auth: AuthConfig{
-			JWTSecret: getEnv("JWT_SECRET", "change-in-prod"),
+			JWTSecret:    getEnv("JWT_SECRET", "change-in-prod"),
+			AccessSecret: getEnv("ACCESS_SECRET", "your-access-secret"),
+		},
+		UserService: UserServiceConfig{
+			URL: getEnv("USER_SERVICE_URL", "http://localhost:3000"),
 		},
 	}
 }
