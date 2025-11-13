@@ -357,13 +357,13 @@ Deletes a push notification token by its ID.
 
 ## Environment Variables
 
- - `DATABASE_URL`: The connection string for your PostgreSQL database.
- - `ACCESS_SECRET`: A secret key for signing access tokens.
- - `REFRESH_SECRET`: A secret key for signing refresh tokens.
- - `UPSTASH_REDIS_REST_URL`: (optional) Upstash REST URL used by `@upstash/redis` (see `.env` example).
- - `UPSTASH_REDIS_REST_TOKEN`: (optional) Upstash REST token (used together with the REST URL).
- - `REDIS_URL`: (optional) Redis connection string, e.g. `redis://[:password@]host:port[/db]`.
- - `REDIS_HOST` / `REDIS_PORT`: Alternative to `REDIS_URL` if you prefer split values (default port 6379).
+- `DATABASE_URL`: The connection string for your PostgreSQL database.
+- `ACCESS_SECRET`: A secret key for signing access tokens.
+- `REFRESH_SECRET`: A secret key for signing refresh tokens.
+- `UPSTASH_REDIS_REST_URL`: (optional) Upstash REST URL used by `@upstash/redis` (see `.env` example).
+- `UPSTASH_REDIS_REST_TOKEN`: (optional) Upstash REST token (used together with the REST URL).
+- `REDIS_URL`: (optional) Redis connection string, e.g. `redis://[:password@]host:port[/db]`.
+- `REDIS_HOST` / `REDIS_PORT`: Alternative to `REDIS_URL` if you prefer split values (default port 6379).
 
 ## Caching (Redis)
 
@@ -388,4 +388,4 @@ Notes:
 - `npm run dev`: Starts the application in development mode with hot-reloading.
 - `npm test`: Starts and runs all tests
 
-### made with ❤ by group 3
+### made with ❤ by group 2
