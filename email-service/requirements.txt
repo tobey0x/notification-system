@@ -3,3 +3,4 @@ redis
 python-dotenv
 jinja2
 requests
+pika
