@@ -126,7 +126,7 @@ services:
       - "8080:8080"
     environment:
       PORT: 8080
-      ENV: production
+      ENV: development
       USER_SERVICE_URL: http://user-service:3000
       ACCESS_SECRET: ${ACCESS_SECRET:-your-access-secret-change-in-prod}
       JWT_SECRET: ${JWT_SECRET:-your-jwt-secret-change-in-prod}

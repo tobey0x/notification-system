@@ -49,6 +49,7 @@ func main() {
 
 	healthHandler := handlers.NewHealthHandler(rabbitMQ, redisClient)
 	notificationHandler := handlers.NewNotificationHandler(rabbitMQ, redisClient)
+	userHandler := handlers.NewUserHandler(cfg.UserService.URL)
 
 	// Initialize middleware
 	authMiddleware := middleware.NewAuthMiddleware(cfg.Auth.JWTSecret, cfg.Auth.AccessSecret, cfg.UserService.URL)
@@ -65,14 +66,42 @@ func main() {
 	// Public routes
 	router.GET("/health", healthHandler.CheckHealth)
 
-	// Protected API routes
+	// API v1 routes
 	v1 := router.Group("/api/v1")
-	v1.Use(authMiddleware.RequireAuth()) // JWT validation with User Service
-	v1.Use(rateLimiter.RateLimit())
 	{
-		v1.POST("/notifications", notificationHandler.CreateNotifiation)
-		v1.GET("/notifications/:id", notificationHandler.GetNotificationStatus)
-		v1.GET("/notifications", notificationHandler.ListNotifications)
+		// Auth routes - proxied to User Service (User Service handles auth)
+		auth := v1.Group("/auth")
+		{
+			auth.POST("/register", userHandler.ProxyToUserService)
+			auth.POST("/login", userHandler.ProxyToUserService)
+			auth.POST("/refresh", userHandler.ProxyToUserService)
+			auth.POST("/logout", userHandler.ProxyToUserService)
+		}
+
+		// User routes - proxied to User Service (User Service handles auth via verifyToken middleware)
+		// We apply rate limiting at gateway level but let User Service handle authentication
+		users := v1.Group("/users")
+		users.Use(rateLimiter.RateLimit())
+		{
+			users.GET("/profile", userHandler.ProxyToUserService)
+			users.GET("/profile/:id", userHandler.ProxyToUserService)
+			users.GET("/preference/:id", userHandler.ProxyToUserService)
+			users.PATCH("/preference/:id", userHandler.ProxyToUserService)
+			users.POST("/preference/:id", userHandler.ProxyToUserService)
+			users.POST("/push-token", userHandler.ProxyToUserService)
+			users.PATCH("/push-token/:id", userHandler.ProxyToUserService)
+			users.DELETE("/push-token/:id", userHandler.ProxyToUserService)
+		}
+
+		// Notification routes - handled by API Gateway (requires authentication at gateway)
+		notifications := v1.Group("/notifications")
+		notifications.Use(authMiddleware.RequireAuth())
+		notifications.Use(rateLimiter.RateLimit())
+		{
+			notifications.POST("", notificationHandler.CreateNotifiation)
+			notifications.GET("/:id", notificationHandler.GetNotificationStatus)
+			notifications.GET("", notificationHandler.ListNotifications)
+		}
 	}
 
 
