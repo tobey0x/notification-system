@@ -61,6 +61,22 @@ services:
     networks:
       - notification_network
 
+  # MailHog for Email Testing
+  # SMTP server that captures emails and displays them in a web UI
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: notification_mailhog
+    ports:
+      - "1025:1025"  # SMTP server
+      - "8025:8025"  # Web UI
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8025"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - notification_network
+
   # ==========================================
   # MICROSERVICES
   # ==========================================
@@ -78,6 +94,7 @@ services:
       PORT: 3000
       NODE_ENV: production
       DATABASE_URL: postgresql://notif_user:notif_pass@postgres:5432/notification_system
+      DATABASE_URI: postgresql://notif_user:notif_pass@postgres:5432/notification_system
       ACCESS_SECRET: ${ACCESS_SECRET:-your-access-secret-change-in-prod}
       REFRESH_SECRET: ${REFRESH_SECRET:-your-refresh-secret-change-in-prod}
       UPSTASH_REDIS_REST_URL: ${UPSTASH_REDIS_REST_URL:-}
@@ -154,12 +171,12 @@ services:
       DLQ_QUEUE: failed.queue
       # Redis Configuration
       REDIS_URL: redis://redis:6379/0
-      # SMTP Configuration
-      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
-      SMTP_PORT: ${SMTP_PORT:-587}
-      SMTP_USER: ${SMTP_USER}
-      SMTP_PASS: ${SMTP_PASS}
-      FROM_EMAIL: ${FROM_EMAIL:-${SMTP_USER}}
+      # SMTP Configuration (MailHog)
+      SMTP_HOST: ${SMTP_HOST:-mailhog}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      FROM_EMAIL: ${FROM_EMAIL:-noreply@notification-system.local}
       # Celery Configuration
       CELERY_BROKER_URL: amqp://admin:admin123@rabbitmq:5672/
       PYTHONUNBUFFERED: 1
@@ -167,6 +184,8 @@ services:
       rabbitmq:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      mailhog:
         condition: service_healthy
     restart: unless-stopped
     networks:
