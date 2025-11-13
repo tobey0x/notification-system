@@ -58,7 +58,7 @@ func Load() *Config {
 		},
 
 		RabbitMQ: RabbitMQConfig{
-			URL:		getEnv("RABBITMQ_URL", "amqp://admin:admin@localhost:5672/"),
+			URL:		getEnv("RABBITMQ_URL", "amqp://admin:admin123@localhost:5672/"),
 			Exchange: 	getEnv("RABBITMQ_EXCHANGE", "notification.direct"),
 			EmailQueue: getEnv("RABBITMQ_EMAIL_QUEUE", "email.queue"),
 			PushQueue: 	getEnv("RABBITMQ_PUSH_QUEUE", "push.queue"),

@@ -81,32 +81,21 @@ func (c *RabbitMQClient) setup() error {
 
 
 	for _, q := range queues {
-		// Use passive declare to check if queue exists, or create it if it doesn't
-		// QueueDeclarePassive checks without creating
-		_, err := c.channel.QueueDeclarePassive(
+		// QueueDeclare is idempotent - creates queue if it doesn't exist,
+		// or returns existing queue if it does (with matching parameters)
+		_, err := c.channel.QueueDeclare(
 			q.name,
-			true,
-			false,
-			false,
-			false,
-			nil,
+			true,  // durable
+			false, // delete when unused
+			false, // exclusive
+			false, // no-wait
+			nil,   // arguments (accept existing configuration)
 		)
-		
 		if err != nil {
-			// Queue doesn't exist, create it
-			_, err = c.channel.QueueDeclare(
-				q.name,
-				true,
-				false,
-				false,
-				false,
-				nil,
-			)
-			if err != nil {
-				return fmt.Errorf("failed to declare queue %s: %w", q.name, err)
-			}
+			return fmt.Errorf("failed to declare queue %s: %w", q.name, err)
 		}
 
+		// Bind queue to exchange (skip for DLQ)
 		if q.name != c.failedQueue {
 			err = c.channel.QueueBind(
 				q.name,
