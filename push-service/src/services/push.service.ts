@@ -47,14 +47,21 @@ interface Template {
 
 export class PushService {
   private static instance: PushService;
-  private messaging: Messaging;
+  private messagingInstance: Messaging | null = null;
   private isCircuitOpen = false;
   private failureCount = 0;
   private readonly CIRCUIT_BREAKER_THRESHOLD = 5;
   private readonly CIRCUIT_RESET_TIMEOUT = 60000; // 1 minute
 
   private constructor() {
-    this.messaging = getMessaging();
+    // Don't initialize messaging here - do it lazily
+  }
+
+  private get messaging(): Messaging {
+    if (!this.messagingInstance) {
+      this.messagingInstance = getMessaging();
+    }
+    return this.messagingInstance;
   }
 
   public static getInstance(): PushService {

@@ -109,26 +109,23 @@ const setupConnectionHandlers = (conn: Connection, ch: Channel): void => {
  */
 const setupQueues = async (ch: Channel): Promise<void> => {
   try {
-    // First, check if the queue exists and get its properties
-    try {
-      await ch.checkQueue(process.env.PUSH_QUEUE || 'push.queue');
-      logger.info(`Queue ${process.env.PUSH_QUEUE || 'push.queue'} already exists, using existing configuration`);
-    } catch (error) {
-      // Queue doesn't exist, create it with our configuration
-      await ch.assertQueue(process.env.PUSH_QUEUE || 'push.queue', { 
-        durable: true,
-        arguments: {
-          'x-message-ttl': 86400000, // 24 hours
-          'x-dead-letter-exchange': '', // Use default exchange
-          'x-dead-letter-routing-key': process.env.FAILED_QUEUE || 'failed.queue'
-        }
-      });
-    }
+    // assertQueue is idempotent - it creates the queue if it doesn't exist,
+    // or returns the existing queue if it does
+    await ch.assertQueue(process.env.PUSH_QUEUE || 'push.queue', { 
+      durable: true,
+      arguments: {
+        'x-message-ttl': 86400000, // 24 hours
+        'x-dead-letter-exchange': '', // Use default exchange
+        'x-dead-letter-routing-key': process.env.FAILED_QUEUE || 'failed.queue'
+      }
+    });
 
     // Always assert the failed queue
     await ch.assertQueue(process.env.FAILED_QUEUE || 'failed.queue', { 
       durable: true 
     });
+    
+    logger.info(`Queues set up successfully: ${process.env.PUSH_QUEUE || 'push.queue'}, ${process.env.FAILED_QUEUE || 'failed.queue'}`);
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Failed to set up queues';
