@@ -1,6 +1,5 @@
 package queue
 
-
 import (
 	"context"
 	"encoding/json"
@@ -82,18 +81,30 @@ func (c *RabbitMQClient) setup() error {
 
 
 	for _, q := range queues {
-		_, err := c.channel.QueueDeclare(
+		// Use passive declare to check if queue exists, or create it if it doesn't
+		// QueueDeclarePassive checks without creating
+		_, err := c.channel.QueueDeclarePassive(
 			q.name,
 			true,
 			false,
 			false,
 			false,
-			amqp.Table{
-				"x-message-ttl": 86400000,
-			},
+			nil,
 		)
+		
 		if err != nil {
-			return fmt.Errorf("failed to declare queue %s: %w", q.name, err)
+			// Queue doesn't exist, create it
+			_, err = c.channel.QueueDeclare(
+				q.name,
+				true,
+				false,
+				false,
+				false,
+				nil,
+			)
+			if err != nil {
+				return fmt.Errorf("failed to declare queue %s: %w", q.name, err)
+			}
 		}
 
 		if q.name != c.failedQueue {
