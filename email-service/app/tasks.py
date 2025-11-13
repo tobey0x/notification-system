@@ -21,11 +21,11 @@ EMAIL_QUEUE = os.getenv("QUEUE", "email.queue")
 DLQ_ROUTING_KEY = os.getenv("DLQ_ROUTING_KEY", "failed")
 DLQ_QUEUE = os.getenv("DLQ_QUEUE", "failed.queue")
 
-SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
-SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
-SMTP_USER = os.getenv("SMTP_USER")
-SMTP_PASS = os.getenv("SMTP_PASS")
-FROM_EMAIL = os.getenv("FROM_EMAIL", SMTP_USER)
+SMTP_HOST = os.getenv("SMTP_HOST", "mailhog")
+SMTP_PORT = int(os.getenv("SMTP_PORT", 1025))
+SMTP_USER = os.getenv("SMTP_USER", "")
+SMTP_PASS = os.getenv("SMTP_PASS", "")
+FROM_EMAIL = os.getenv("FROM_EMAIL", "noreply@notification-system.local")
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 redis_client = redis.from_url(REDIS_URL, decode_responses=True)
@@ -40,6 +40,17 @@ jinja_env = Environment(
 # Celery app (broker)
 CELERY_BROKER = os.getenv("CELERY_BROKER_URL", RABBITMQ_URL)
 celery_app = Celery("email_service", broker=CELERY_BROKER, backend="rpc://")
+
+# Configure Celery to consume from email.queue
+celery_app.conf.update(
+    task_routes={
+        'send_email_task': {'queue': EMAIL_QUEUE}
+    },
+    task_default_queue=EMAIL_QUEUE,
+    task_default_exchange=EXCHANGE,
+    task_default_exchange_type='direct',
+    task_default_routing_key='email'
+)
 
 # Task base with retry defaults
 class EmailTaskWithRetry(Task):
