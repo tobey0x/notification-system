@@ -8,20 +8,9 @@ dotenv.config();
 
 export const redis = Redis.fromEnv();
 export const prisma = new PrismaClient();
+
 export const app = fastify({
-  logger: process.env.NODE_ENV === 'production' 
-    ? true
-    : {
-        level: "info",
-        transport: {
-          target: "pino-pretty",
-          options: {
-            colorize: true,
-            translateTime: "SYS:HH:MM:ss Z",
-            ignore: "pid,hostname",
-          },
-        },
-      },
+  logger: true,  // Simple JSON logging
 });
 const port = process.env.PORT! ? parseInt(process.env.PORT) : 8000;
 
