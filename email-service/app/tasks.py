@@ -41,7 +41,7 @@ jinja_env = Environment(
 CELERY_BROKER = os.getenv("CELERY_BROKER_URL", RABBITMQ_URL)
 celery_app = Celery("email_service", broker=CELERY_BROKER, backend="rpc://")
 
-# Configure Celery to consume from email.queue
+# Configure Celery to consume from email.queue and accept raw JSON from API Gateway
 celery_app.conf.update(
     task_routes={
         'send_email_task': {'queue': EMAIL_QUEUE}
@@ -49,7 +49,13 @@ celery_app.conf.update(
     task_default_queue=EMAIL_QUEUE,
     task_default_exchange=EXCHANGE,
     task_default_exchange_type='direct',
-    task_default_routing_key='email'
+    task_default_routing_key='email',
+    # Accept messages not in Celery's task format (raw JSON from API Gateway)
+    task_serializer='json',
+    accept_content=['json', 'application/json'],
+    result_serializer='json',
+    # Don't require Celery's task protocol headers
+    task_protocol=1
 )
 
 # Task base with retry defaults
