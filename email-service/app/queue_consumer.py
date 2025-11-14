@@ -44,8 +44,8 @@ def callback(ch, method, properties, body):
             "user_id": message.get("user_id"),
             "payload": {
                 "template_id": message.get("template_id", "welcome.html"),
-                "to": message.get("to") or message.get("variables", {}).get("email") or "default@example.com",
-                "subject": message.get("subject", "Notification"),
+                "to": message.get("to") or message.get("variables", {}).get("to") or message.get("variables", {}).get("email") or "default@example.com",
+                "subject": message.get("subject") or message.get("variables", {}).get("subject", "Notification"),
                 "variables": message.get("variables", {})
             },
             "priority": message.get("priority", "normal"),

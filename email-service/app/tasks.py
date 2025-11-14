@@ -130,10 +130,12 @@ def send_email_task(self, payload: dict):
         update_notification_status(notification_id, "processing")
 
         email_payload = payload.get("payload") or payload
-        to_email = email_payload.get("to")
-        subject = email_payload.get("subject", "No Subject")
-        template_name = email_payload.get("template_id") or email_payload.get("template") or "welcome.html"
         variables = email_payload.get("variables", {})
+        
+        # Extract recipient email - check both top level and variables
+        to_email = email_payload.get("to") or variables.get("to") or variables.get("user_email")
+        subject = email_payload.get("subject") or variables.get("subject") or "No Subject"
+        template_name = email_payload.get("template_id") or email_payload.get("template") or "welcome.html"
 
         # Render template (may raise if template missing)
         html_body = render_template(template_name, variables)
