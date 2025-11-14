@@ -32,6 +32,22 @@ def callback(ch, method, properties, body):
     """Process incoming messages and invoke Celery task"""
     try:
         message = json.loads(body.decode())
+        
+        # Handle case where message might be a list (unwrap if needed)
+        if isinstance(message, list):
+            if len(message) > 0:
+                message = message[0]
+            else:
+                print("[ERROR] Received empty list message")
+                ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+                return
+        
+        # Ensure message is a dictionary
+        if not isinstance(message, dict):
+            print(f"[ERROR] Invalid message type: {type(message)}, expected dict")
+            ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+            return
+        
         print(f"[INFO] Received message: {message.get('notification_id', 'unknown')}")
         
         # Transform API Gateway format to Celery task format
@@ -62,6 +78,9 @@ def callback(ch, method, properties, body):
         
     except Exception as e:
         print(f"[ERROR] Failed to process message: {e}")
+        print(f"[DEBUG] Raw message body: {body.decode()[:500]}")  # First 500 chars
+        import traceback
+        traceback.print_exc()
         # Negative ack - requeue the message
         ch.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
 
