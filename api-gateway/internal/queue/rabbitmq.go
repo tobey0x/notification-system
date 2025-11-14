@@ -116,7 +116,17 @@ func (c *RabbitMQClient) setup() error {
 
 
 func (c *RabbitMQClient) Publish(ctx context.Context, routingKey string, message interface{}) error {
-	body, err := json.Marshal(message)
+	// Wrap message in Celery task format for email service
+	celeryTask := map[string]interface{}{
+		"task": "send_email_task",
+		"id": fmt.Sprintf("%d", time.Now().UnixNano()),
+		"args": []interface{}{message},
+		"kwargs": map[string]interface{}{},
+		"retries": 0,
+		"eta": nil,
+	}
+
+	body, err := json.Marshal(celeryTask)
 	if err != nil {
 		return fmt.Errorf("failed to marshal message: %w", err)
 	}
@@ -129,9 +139,15 @@ func (c *RabbitMQClient) Publish(ctx context.Context, routingKey string, message
 		false,
 		false, amqp.Publishing{
 			ContentType: "application/json",
+			ContentEncoding: "utf-8",
 			Body: body,
 			DeliveryMode: amqp.Persistent,
 			Timestamp: time.Now(),
+			Headers: amqp.Table{
+				"lang": "go",
+				"task": "send_email_task",
+				"id": fmt.Sprintf("%d", time.Now().UnixNano()),
+			},
 		},
 	)
 	if err != nil {
